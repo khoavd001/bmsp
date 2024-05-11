@@ -1,11 +1,18 @@
 import 'package:bmsp/monitor.dart';
 import 'package:bmsp/rsc/color_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+      options: const FirebaseOptions(
+          apiKey: "AIzaSyBEv-R-ldgNqPRe9bISG8ldIx3ntbKl7ok",
+          appId: "1:541058254186:web:8f82c95d07c87629cf5113",
+          messagingSenderId: "541058254186",
+          projectId: "datapump-9d6d8"));
   runApp(const MyApp());
 }
 
