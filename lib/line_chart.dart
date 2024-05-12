@@ -1,39 +1,80 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
 import 'dart:math';
 
-import 'package:bmsp/rsc/color_manager.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+
+import 'package:bmsp/rsc/color_manager.dart';
+import 'package:bmsp/util/enum/unit_enum.dart';
+
+class Result {
+  String time;
+  double value;
+  Result({
+    required this.time,
+    required this.value,
+  });
+}
 
 class LineChartSample2 extends StatefulWidget {
-  const LineChartSample2({super.key});
-
+  const LineChartSample2({super.key, required this.unitType});
+  final UnitEnum unitType;
   @override
   State<LineChartSample2> createState() => _LineChartSample2State();
 }
 
 class _LineChartSample2State extends State<LineChartSample2> {
+  String data = '0';
   List<Color> gradientColors = [
     AppColors.primary,
     AppColors.primary2,
   ];
-  List<double> _dataPoints = [0, 3]; // Initial data points
-
+  List<double> _dataPoints = []; // Initial data points
+  List<String> _axisX = [];
+  List<Result> result = [];
   late Timer _timer;
-  int _counter = 0;
   @override
   void initState() {
-    // Start a timer to generate new data points every 500 milliseconds (2 updates per second)
-    _timer = Timer.periodic(const Duration(milliseconds: 1000), (timer) {
-      // Generate a random number between 0 and 100 to simulate data
-      final randomValue = Random().nextInt(6).toDouble();
+    DatabaseReference databaseRef = FirebaseDatabase.instance
+        .ref()
+        .child('Monitor')
+        .child(widget.unitType.fetchString)
+        .child('data');
+    databaseRef.onValue.listen((event) {
       setState(() {
-        // Update the data points by rotating the list and adding a new value at the end
-        _dataPoints.insert(0, randomValue);
+        if (_dataPoints.length > 9) {
+          _dataPoints.removeAt(0);
+          _axisX.removeAt(0);
+          result.removeAt(0);
+          addData(event);
+        } else {
+          addData(event);
+        }
       });
     });
-
     super.initState();
+  }
+
+  void addData(DatabaseEvent event) {
+    _dataPoints.add(widget.unitType == UnitEnum.pressure
+        ? 5 * (double.parse(event.snapshot.value.toString())) / 100
+        : double.parse(event.snapshot.value.toString()) /
+            widget.unitType.divideNumber);
+
+    _axisX.add(DateFormat('HH:mm:ss').format(DateTime.now()));
+
+    result.add(Result(
+        time: DateFormat('HH:mm:ss').format(DateTime.now()),
+        value: double.parse(event.snapshot.value.toString())));
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
   }
 
   @override
@@ -46,39 +87,81 @@ class _LineChartSample2State extends State<LineChartSample2> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1.70,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              right: 18,
-              left: 12,
-              top: 24,
-              bottom: 12,
-            ),
-            child: LineChart(
-              duration: Duration(seconds: 1),
-              showAvg ? avgData() : mainData(),
-            ),
+    return Row(
+      children: [
+        const SizedBox(
+          width: 16,
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 500),
+          child: DataTable(
+              columns: [
+                DataColumn(
+                  label: Text(widget.unitType.nameString),
+                ),
+                const DataColumn(
+                  label: Text('Time'),
+                ),
+              ],
+              rows: result
+                  .map(
+                    (e) => DataRow(cells: [
+                      DataCell(Text(
+                          '${e.value.toString()} ${widget.unitType.unitString}')),
+                      DataCell(Text(e.time)),
+                    ]),
+                  )
+                  .toList()),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: VerticalDivider(
+            width: 20,
+            thickness: 1,
+            indent: 20,
+            endIndent: 0,
+            color: Colors.grey,
           ),
         ),
-        SizedBox(
-          width: 60,
-          height: 34,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
-            child: Text(
-              'avg',
-              style: TextStyle(
-                fontSize: 12,
-                color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
+        Expanded(
+          child: Stack(
+            children: <Widget>[
+              AspectRatio(
+                aspectRatio: 1.70,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    right: 18,
+                    left: 12,
+                    top: 24,
+                    bottom: 12,
+                  ),
+                  child: LineChart(
+                    duration: const Duration(seconds: 1),
+                    showAvg ? avgData() : mainData(),
+                  ),
+                ),
               ),
-            ),
+              SizedBox(
+                width: 60,
+                height: 34,
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      showAvg = !showAvg;
+                    });
+                  },
+                  child: Text(
+                    'avg',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: showAvg
+                          ? Colors.white.withOpacity(0.5)
+                          : Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -92,14 +175,54 @@ class _LineChartSample2State extends State<LineChartSample2> {
     );
     Widget text;
     switch (value.toInt()) {
+      case 0:
+        if (_axisX.isNotEmpty) {
+          text = Text(_axisX[0], style: style);
+        } else {
+          text = const Text("", style: style);
+        }
+        break;
+      case 1:
+        if (_axisX.length > 1) {
+          text = Text(_axisX[1], style: style);
+        } else {
+          text = const Text("", style: style);
+        }
+        break;
       case 2:
-        text = const Text('MAR', style: style);
+        if (_axisX.length > 2) {
+          text = Text(_axisX[2], style: style);
+        } else {
+          text = const Text("", style: style);
+        }
+        break;
+      case 3:
+        if (_axisX.length > 3) {
+          text = Text(_axisX[3], style: style);
+        } else {
+          text = const Text("", style: style);
+        }
+        break;
+      case 4:
+        if (_axisX.length > 4) {
+          text = Text(_axisX[4], style: style);
+        } else {
+          text = const Text("", style: style);
+        }
         break;
       case 5:
-        text = const Text('JUN', style: style);
+        if (_axisX.length > 5) {
+          text = Text(_axisX[5], style: style);
+        } else {
+          text = const Text("", style: style);
+        }
         break;
-      case 8:
-        text = const Text('SEP', style: style);
+      case 6:
+        if (_axisX.length > 6) {
+          text = Text(_axisX[6], style: style);
+        } else {
+          text = const Text("", style: style);
+        }
         break;
       default:
         text = const Text('', style: style);
@@ -120,14 +243,36 @@ class _LineChartSample2State extends State<LineChartSample2> {
     String text;
     switch (value.toInt()) {
       case 1:
-        text = '10K';
+        text = '${1 * widget.unitType.divideNumber}';
+        break;
+      case 2:
+        text = '${2 * widget.unitType.divideNumber}';
         break;
       case 3:
-        text = '30k';
+        text = '${3 * widget.unitType.divideNumber}';
+        break;
+      case 4:
+        text = '${4 * widget.unitType.divideNumber}';
         break;
       case 5:
-        text = '50k';
+        text = '${5 * widget.unitType.divideNumber}';
         break;
+      case 6:
+        text = '${6 * widget.unitType.divideNumber}';
+        break;
+      case 7:
+        text = '${7 * widget.unitType.divideNumber}';
+        break;
+      case 8:
+        text = '${8 * widget.unitType.divideNumber}';
+        break;
+      case 9:
+        text = '${9 * widget.unitType.divideNumber}';
+        break;
+      case 10:
+        text = '${10 * widget.unitType.divideNumber}';
+        break;
+
       default:
         return Container();
     }
@@ -187,7 +332,10 @@ class _LineChartSample2State extends State<LineChartSample2> {
       minX: 0,
       maxX: 11,
       minY: 0,
-      maxY: 6,
+      maxY: (widget.unitType == UnitEnum.speed ||
+              widget.unitType == UnitEnum.pressure)
+          ? 5
+          : 10,
       lineBarsData: [
         LineChartBarData(
           spots: _dataPoints.asMap().entries.map((entry) {

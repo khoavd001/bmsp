@@ -6,7 +6,7 @@ enum UnitEnum {
   flowWater,
   volume,
   pressure,
-  waterLevel;
+  power;
 
   String get imageString {
     switch (this) {
@@ -24,7 +24,7 @@ enum UnitEnum {
         return 'assets/images/volume_water.png';
       case pressure:
         return 'assets/images/pressure.png';
-      case waterLevel:
+      case power:
         return 'assets/images/level_water.png';
       default:
         return '';
@@ -47,8 +47,77 @@ enum UnitEnum {
         return 'Volume';
       case pressure:
         return 'Pressure';
-      case waterLevel:
-        return 'Water Level';
+      case power:
+        return 'Power';
+      default:
+        return '';
+    }
+  }
+
+  String get fetchString {
+    switch (this) {
+      case voltage:
+        return 'Voltage';
+      case current:
+        return 'Curent';
+      case frequency:
+        return 'Frequency';
+      case speed:
+        return 'RPM';
+      case flowWater:
+        return 'Flow Water';
+      case volume:
+        return 'Volume';
+      case pressure:
+        return 'PID-Feedback';
+      case power:
+        return 'Power';
+      default:
+        return 'Curent';
+    }
+  }
+
+  int get divideNumber {
+    switch (this) {
+      case voltage:
+        return 100;
+      case current:
+        return 1;
+      case frequency:
+        return 10;
+      case speed:
+        return 1000;
+      case flowWater:
+        return 1;
+      case volume:
+        return 1;
+      case pressure:
+        return 1;
+      case power:
+        return 10;
+      default:
+        return 1;
+    }
+  }
+
+  String get unitString {
+    switch (this) {
+      case voltage:
+        return 'V';
+      case current:
+        return 'A';
+      case frequency:
+        return 'HZ';
+      case speed:
+        return 'RPM';
+      case flowWater:
+        return 'l/m';
+      case volume:
+        return 'l';
+      case pressure:
+        return 'bar';
+      case power:
+        return 'kW';
       default:
         return '';
     }

@@ -16,6 +16,7 @@ class Monitor extends StatefulWidget {
 
 class _MonitorState extends State<Monitor> {
   int _selectedIndex = 0;
+  UnitEnum unitType = UnitEnum.voltage;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +65,7 @@ class _MonitorState extends State<Monitor> {
                           onTap: () {
                             setState(() {
                               _selectedIndex = index;
+                              unitType = UnitEnum.values[index];
                             });
                           },
                         ),
@@ -73,57 +75,9 @@ class _MonitorState extends State<Monitor> {
                 ),
               ),
               Flexible(
-                flex: 4,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 16,
-                    ),
-                    DataTable(columns: [
-                      DataColumn(
-                        label: Text('Time'),
-                      ),
-                      DataColumn(
-                        label: Text('Voltage'),
-                      ),
-                    ], rows: [
-                      DataRow(cells: [
-                        DataCell(Text('1')),
-                        DataCell(Text('Arshik')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text('1')),
-                        DataCell(Text('Arshik')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text('1')),
-                        DataCell(Text('Arshik')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text('1')),
-                        DataCell(Text('Arshik')),
-                      ]),
-                      DataRow(cells: [
-                        DataCell(Text('1')),
-                        DataCell(Text('Arshik')),
-                      ]),
-                    ]),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 16),
-                      child: const VerticalDivider(
-                        width: 20,
-                        thickness: 1,
-                        indent: 20,
-                        endIndent: 0,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Expanded(child: LineChartSample2()),
-                  ],
-                ),
-              ),
+                  flex: 4,
+                  child: LineChartSample2(
+                      key: ValueKey(unitType.fetchString), unitType: unitType)),
             ],
           ),
         ),

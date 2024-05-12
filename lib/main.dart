@@ -1,3 +1,4 @@
+import 'package:bmsp/controller.dart';
 import 'package:bmsp/monitor.dart';
 import 'package:bmsp/rsc/color_manager.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,12 +13,26 @@ void main() async {
           apiKey: "AIzaSyBEv-R-ldgNqPRe9bISG8ldIx3ntbKl7ok",
           appId: "1:541058254186:web:8f82c95d07c87629cf5113",
           messagingSenderId: "541058254186",
-          projectId: "datapump-9d6d8"));
+          projectId: "datapump-9d6d8",
+          databaseURL: "https://datapump-9d6d8-default-rtdb.firebaseio.com"));
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final Future<FirebaseApp> _fbApp = Firebase.initializeApp(
+      options: const FirebaseOptions(
+          apiKey: "AIzaSyBEv-R-ldgNqPRe9bISG8ldIx3ntbKl7ok",
+          appId: "1:541058254186:web:8f82c95d07c87629cf5113",
+          messagingSenderId: "541058254186",
+          projectId: "datapump-9d6d8",
+          databaseURL: "https://datapump-9d6d8-default-rtdb.firebaseio.com"));
 
   // This widget is the root of your application.
   @override
@@ -25,40 +40,20 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: FutureBuilder(
+          future: _fbApp,
+          builder: (context, snapshot) {
+            return const MyHomePage(title: 'Flutter Demo Home Page');
+          }),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -178,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               Icon(Icons.monitor_rounded),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 24),
-                                child: Text('Mornitor'),
+                                child: Text('Controller'),
                               ),
                             ],
                           ),
@@ -202,7 +197,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                               Icon(Icons.construction),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 24),
-                                child: Text('Controller'),
+                                child: Text('Mornitor'),
                               ),
                             ],
                           ),
@@ -240,18 +235,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: [
+                children: const [
+                  Controller(),
                   Monitor(),
-                  const Center(
-                    child: Text(
-                      'Buy Now',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const Center(
+                  Center(
                     child: Text(
                       'Place Bid',
                       style: TextStyle(
