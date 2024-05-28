@@ -77,7 +77,7 @@ class _MonitorState extends State<Monitor> {
               Flexible(
                   flex: 4,
                   child: LineChartSample2(
-                      key: ValueKey(unitType.fetchString), unitType: unitType)),
+                      key: ValueKey(unitType.nameString), unitType: unitType)),
             ],
           ),
         ),

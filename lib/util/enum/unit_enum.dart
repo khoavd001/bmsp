@@ -67,7 +67,7 @@ enum UnitEnum {
       case flowWater:
         return 'Flow Water';
       case volume:
-        return 'Volume';
+        return 'Flow Water';
       case pressure:
         return 'PID-Feedback';
       case power:
@@ -88,9 +88,9 @@ enum UnitEnum {
       case speed:
         return 1000;
       case flowWater:
-        return 1;
+        return 10;
       case volume:
-        return 1;
+        return 10;
       case pressure:
         return 1;
       case power:

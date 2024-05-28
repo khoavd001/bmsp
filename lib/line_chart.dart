@@ -4,12 +4,14 @@ import 'dart:math';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 import 'package:bmsp/rsc/color_manager.dart';
 import 'package:bmsp/util/enum/unit_enum.dart';
+import 'package:lottie/lottie.dart';
 
 class Result {
   String time;
@@ -27,7 +29,8 @@ class LineChartSample2 extends StatefulWidget {
   State<LineChartSample2> createState() => _LineChartSample2State();
 }
 
-class _LineChartSample2State extends State<LineChartSample2> {
+class _LineChartSample2State extends State<LineChartSample2>
+    with TickerProviderStateMixin {
   String data = '0';
   List<Color> gradientColors = [
     AppColors.primary,
@@ -36,12 +39,22 @@ class _LineChartSample2State extends State<LineChartSample2> {
   List<double> _dataPoints = []; // Initial data points
   List<String> _axisX = [];
   List<Result> result = [];
+  double sumoutSide = 0;
   late Timer _timer;
+  // Create an AnimationController
+  late AnimationController _controller;
   @override
   void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
     DatabaseReference databaseRef = FirebaseDatabase.instance
         .ref()
-        .child('Monitor')
+        .child(widget.unitType == UnitEnum.flowWater ||
+                widget.unitType == UnitEnum.volume
+            ? 'Monitor-Valve'
+            : 'Monitor')
         .child(widget.unitType.fetchString)
         .child('data');
     databaseRef.onValue.listen((event) {
@@ -60,11 +73,47 @@ class _LineChartSample2State extends State<LineChartSample2> {
   }
 
   void addData(DatabaseEvent event) {
+    var lastTime = DateTime.now();
+    final theNextTime = DateTime.now();
+    double sum = 0;
+    final dateFormat = DateFormat(
+        'yyyy-MM-dd HH:mm:ss'); // Custom date format with date and time
+
+    if (_axisX.isNotEmpty) {
+      String lastTimeStr = _axisX.last;
+
+      if (lastTimeStr != null && lastTimeStr.isNotEmpty) {
+        try {
+          // Prepend a default date to the time string
+          String dateTimeStr =
+              "2024-05-28 $lastTimeStr"; // Use a specific date, or DateTime.now().toString().split(' ')[0] for today's date
+          lastTime = dateFormat.parse(dateTimeStr);
+          sum = _dataPoints.reduce((value, element) => value + element);
+          print('sum: $sum');
+        } catch (e) {
+          print('Error parsing date: $e');
+          // Handle error
+          return;
+        }
+      } else {
+        print('The last time string is null or empty');
+        return;
+      }
+    }
+    final number = double.parse(event.snapshot.value.toString()) /
+        widget.unitType.divideNumber;
+    final between2Time = theNextTime.difference(lastTime).inSeconds;
+    print('sum: $sum');
     _dataPoints.add(widget.unitType == UnitEnum.pressure
         ? 5 * (double.parse(event.snapshot.value.toString())) / 100
-        : double.parse(event.snapshot.value.toString()) /
-            widget.unitType.divideNumber);
-
+        : widget.unitType == UnitEnum.volume
+            ? sum + number / 60 * between2Time
+            : number);
+    setState(() {
+      // Update the animation progress when Slider value changes
+      _controller.value = (sum + number / 60 * between2Time) / 10;
+      sumoutSide = (sum + number / 60 * between2Time) * 10;
+    });
     _axisX.add(DateFormat('HH:mm:ss').format(DateTime.now()));
 
     result.add(Result(
@@ -79,6 +128,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
 
   @override
   void dispose() {
+    _controller.dispose();
     _timer.cancel(); // Cancel the timer when the widget is disposed
     super.dispose();
   }
@@ -135,10 +185,85 @@ class _LineChartSample2State extends State<LineChartSample2> {
                     top: 24,
                     bottom: 12,
                   ),
-                  child: LineChart(
-                    duration: const Duration(seconds: 1),
-                    showAvg ? avgData() : mainData(),
-                  ),
+                  child: widget.unitType == UnitEnum.volume
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Stack(
+                              children: [
+                                Column(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.only(left: 10),
+                                      width: 140,
+                                      height: 160,
+                                      decoration: BoxDecoration(
+                                          color:
+                                              Color.fromARGB(255, 47, 130, 246),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color.fromARGB(
+                                                      255, 17, 104, 255)
+                                                  .withOpacity(0.5),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 15),
+                                            ),
+                                          ]),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Text(
+                                            'Volume',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                '${sumoutSide.toStringAsFixed(2).replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")} ',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.white),
+                                              ),
+                                              Text(
+                                                'L',
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.white),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const SizedBox(height: 50),
+                                    Lottie.asset('assets/images/cloud.json',
+                                        height: 120),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Lottie.asset(
+                              'assets/images/volumn.json',
+                              controller: _controller,
+                            ),
+                          ],
+                        )
+                      : LineChart(
+                          duration: const Duration(seconds: 1),
+                          showAvg ? avgData() : mainData(),
+                        ),
                 ),
               ),
               SizedBox(
