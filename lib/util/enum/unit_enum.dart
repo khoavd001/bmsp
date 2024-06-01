@@ -25,7 +25,7 @@ enum UnitEnum {
       case pressure:
         return 'assets/images/pressure.png';
       case power:
-        return 'assets/images/level_water.png';
+        return 'assets/images/power.png';
       default:
         return '';
     }
@@ -115,7 +115,7 @@ enum UnitEnum {
       case volume:
         return 'l';
       case pressure:
-        return 'bar';
+        return '%';
       case power:
         return 'kW';
       default:
