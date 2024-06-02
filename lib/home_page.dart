@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:bmsp/controller.dart';
+import 'package:bmsp/login_screen.dart';
 import 'package:bmsp/monitor.dart';
 import 'package:bmsp/rsc/color_manager.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -53,7 +57,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
                       child: InkWell(
                         splashColor: AppColors.primary.withAlpha(50),
-                        onTap: () {},
+                        onTap: () {
+                          _signOut();
+                        },
                         borderRadius:
                             const BorderRadius.all(Radius.circular(25)),
                         child: const Padding(
@@ -203,5 +209,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  void _signOut() async {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    try {
+      await _auth.signOut();
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (_) => LoginScreen()));
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }
