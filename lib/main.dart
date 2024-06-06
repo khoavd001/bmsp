@@ -34,31 +34,15 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final Future<FirebaseApp> _fbApp = Firebase.initializeApp(
-      options: const FirebaseOptions(
-          apiKey: "AIzaSyBEv-R-ldgNqPRe9bISG8ldIx3ntbKl7ok",
-          appId: "1:541058254186:web:8f82c95d07c87629cf5113",
-          messagingSenderId: "541058254186",
-          authDomain: "datapump-9d6d8.firebaseapp.com",
-          projectId: "datapump-9d6d8",
-          storageBucket: "datapump-9d6d8.appspot.com",
-          databaseURL: "https://datapump-9d6d8-default-rtdb.firebaseio.com"));
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: FutureBuilder(
-          future: _fbApp,
-          builder: (context, snapshot) {
-            // ignore: prefer_const_constructors
-            return LoginScreen();
-          }),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: LoginScreen());
   }
 }

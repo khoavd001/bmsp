@@ -18,12 +18,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final _formKey = GlobalKey<FormBuilderState>();
 
-  String _statusMessage = '';
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
@@ -41,70 +38,12 @@ class _LoginScreenState extends State<LoginScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Expanded(
+        child: Container(
+          width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color.fromARGB(255, 255, 255, 255)
-                                .withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: const Offset(
-                                0, 5), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Image.asset(
-                        'assets/images/logo_ute.png',
-                        height: 100,
-                        filterQuality: FilterQuality.high,
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * 0.168,
-                    ),
-                    Column(
-                      children: [
-                        const Text(
-                          'TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HỒ CHÍ MINH',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.bold,
-                            fontFeatures: [FontFeature.alternative(0)],
-                          ),
-                        ),
-                        const SizedBox(
-                            height:
-                                10.0), // Add some space between text and the line
-                        Container(
-                          width: size.width * 0.51747312,
-                          height: 1.0,
-                          color: Colors.white,
-                        ),
-                        const Text(
-                          'Địa chỉ: 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức, Thành phố Hồ Chí Minh.',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.normal,
-                            fontFeatures: [FontFeature.alternative(0)],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              _renderHeader(size),
               const SizedBox(height: 70),
               const Text(
                 'Welcome Back!',
@@ -114,48 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 500),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 30.0),
-                    _buildTextField('Username', _usernameController),
-                    const SizedBox(height: 20.0),
-                    _buildTextField('Password', _passwordController,
-                        obscureText: true),
-                    const SizedBox(height: 30.0),
-                    _buildLoginButton(context),
-                    const SizedBox(height: 20.0),
-                  ],
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () => signInWithGoogle(context),
-                    child: _buildSocialLoginButton(
-                      context,
-                      FontAwesomeIcons.google,
-                      'Sign in with Google',
-                      const Color(0xFFDB4437),
-                      () {
-                        // Add your Google sign-in logic here
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 20.0),
-                  _buildSocialLoginButton(
-                    context,
-                    FontAwesomeIcons.apple,
-                    'Sign in with Apple',
-                    const Color(0xFF000000),
-                    () {
-                      // Add your Apple sign-in logic here
-                    },
-                  ),
-                ],
-              ),
+              _renderForm(context),
+              _renderloginIcon(context),
               const SizedBox(height: 20.0),
               const Text(
                 'Forgot Password?',
@@ -187,6 +86,114 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Row _renderloginIcon(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        InkWell(
+          onTap: () => signInWithGoogle(context),
+          child: _buildSocialLoginButton(
+            context,
+            FontAwesomeIcons.google,
+            'Sign in with Google',
+            const Color(0xFFDB4437),
+            () {
+              // Add your Google sign-in logic here
+            },
+          ),
+        ),
+        const SizedBox(width: 20.0),
+        _buildSocialLoginButton(
+          context,
+          FontAwesomeIcons.apple,
+          'Sign in with Apple',
+          const Color(0xFF000000),
+          () {
+            // Add your Apple sign-in logic here
+          },
+        ),
+      ],
+    );
+  }
+
+  Padding _renderForm(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 500),
+      child: Column(
+        children: [
+          const SizedBox(height: 30.0),
+          _buildTextField('Username', _usernameController),
+          const SizedBox(height: 20.0),
+          _buildTextField('Password', _passwordController, obscureText: true),
+          const SizedBox(height: 30.0),
+          _buildLoginButton(context),
+          const SizedBox(height: 20.0),
+        ],
+      ),
+    );
+  }
+
+  Padding _renderHeader(Size size) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      const Color.fromARGB(255, 255, 255, 255).withOpacity(0.5),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 5), // changes position of shadow
+                ),
+              ],
+            ),
+            child: Image.asset(
+              'assets/images/logo_ute.png',
+              height: 100,
+              filterQuality: FilterQuality.high,
+            ),
+          ),
+          SizedBox(
+            width: size.width * 0.168,
+          ),
+          Column(
+            children: [
+              const Text(
+                'TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HỒ CHÍ MINH',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30.0,
+                  fontWeight: FontWeight.bold,
+                  fontFeatures: [FontFeature.alternative(0)],
+                ),
+              ),
+              const SizedBox(
+                  height: 10.0), // Add some space between text and the line
+              Container(
+                width: size.width * 0.51747312,
+                height: 1.0,
+                color: Colors.white,
+              ),
+              const Text(
+                'Địa chỉ: 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức, Thành phố Hồ Chí Minh.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.normal,
+                  fontFeatures: [FontFeature.alternative(0)],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -366,6 +373,6 @@ Future<void> signInWithGoogle(BuildContext context) async {
   } catch (e) {
     // Xử lý lỗi nếu có
     log('Sign in with Google failed: $e');
-    return null;
+    return;
   }
 }
