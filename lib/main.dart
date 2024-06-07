@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
           future: _fbApp,
           builder: (context, snapshot) {
             // ignore: prefer_const_constructors
-            return LoginScreen();
+            return MyHomePage();
           }),
     );
   }

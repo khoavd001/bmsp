@@ -73,6 +73,13 @@ class _LineChartSample2State extends State<LineChartSample2>
   }
 
   void addData(DatabaseEvent event) {
+    // Get the current date and time
+    DateTime now = DateTime.now();
+
+    // Extract year, month, and day
+    int year = now.year;
+    int month = now.month;
+    int day = now.day;
     var lastTime = DateTime.now();
     final theNextTime = DateTime.now();
     double sum = 0;
@@ -86,7 +93,7 @@ class _LineChartSample2State extends State<LineChartSample2>
         try {
           // Prepend a default date to the time string
           String dateTimeStr =
-              "2024-05-28 $lastTimeStr"; // Use a specific date, or DateTime.now().toString().split(' ')[0] for today's date
+              "$year-$month-$day $lastTimeStr"; // Use a specific date, or DateTime.now().toString().split(' ')[0] for today's date
           lastTime = dateFormat.parse(dateTimeStr);
           sum = _dataPoints.reduce((value, element) => value + element);
           print('sum: $sum');
