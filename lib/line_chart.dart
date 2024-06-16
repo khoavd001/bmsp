@@ -110,7 +110,7 @@ class _LineChartSample2State extends State<LineChartSample2>
     final between2Time = theNextTime.difference(lastTime).inSeconds;
     print('sum: $sum');
     _dataPoints.add(widget.unitType == UnitEnum.pressure
-        ? 5 * (double.parse(event.snapshot.value.toString())) / 100
+        ? (double.parse(event.snapshot.value.toString())) / 10
         : widget.unitType == UnitEnum.volume
             ? sum + number / 60 * between2Time
             : number);
@@ -469,10 +469,7 @@ class _LineChartSample2State extends State<LineChartSample2>
       minX: 0,
       maxX: 11,
       minY: 0,
-      maxY: (widget.unitType == UnitEnum.speed ||
-              widget.unitType == UnitEnum.pressure)
-          ? 5
-          : 10,
+      maxY: (widget.unitType == UnitEnum.speed) ? 5 : 10,
       lineBarsData: [
         LineChartBarData(
           spots: _dataPoints.asMap().entries.map((entry) {

@@ -113,9 +113,9 @@ class _ControllerState extends State<Controller>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                   colors: [
-                    Color.fromARGB(255, 255, 255, 255),
+                    const Color.fromARGB(255, 255, 255, 255),
                     AppColors.linear.withAlpha(100),
-                    Color.fromARGB(255, 255, 255, 255),
+                    const Color.fromARGB(255, 255, 255, 255),
                   ],
                   stops: const [
                     0.1,
