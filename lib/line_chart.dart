@@ -49,7 +49,7 @@ class _LineChartSample2State extends State<LineChartSample2>
   void initState() {
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
     );
     DatabaseReference databaseRef = FirebaseDatabase.instance
         .ref()
@@ -201,13 +201,13 @@ class _LineChartSample2State extends State<LineChartSample2>
                                 Column(
                                   children: [
                                     Container(
-                                      padding: EdgeInsets.only(left: 10),
+                                      padding: const EdgeInsets.only(left: 10),
                                       width: 140,
                                       height: 160,
                                       decoration: BoxDecoration(
-                                          color:
-                                              Color.fromARGB(255, 47, 130, 246),
-                                          borderRadius: BorderRadius.all(
+                                          color: const Color.fromARGB(
+                                              255, 47, 130, 246),
+                                          borderRadius: const BorderRadius.all(
                                               Radius.circular(20)),
                                           boxShadow: [
                                             BoxShadow(
@@ -222,10 +222,10 @@ class _LineChartSample2State extends State<LineChartSample2>
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          SizedBox(
+                                          const SizedBox(
                                             height: 20,
                                           ),
-                                          Text(
+                                          const Text(
                                             'Volume',
                                             style: TextStyle(
                                                 fontSize: 20,
@@ -234,16 +234,16 @@ class _LineChartSample2State extends State<LineChartSample2>
                                           Consumer<DataModel>(builder:
                                               (context, dataModel, child) {
                                             _controller.value =
-                                                dataModel.sumOutSide / 10;
+                                                dataModel.sumOutSide / 100;
                                             return Row(
                                               children: [
                                                 Text(
                                                   '${dataModel.sumOutSide.toStringAsFixed(2).replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")} ',
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       fontSize: 20,
                                                       color: Colors.white),
                                                 ),
-                                                Text(
+                                                const Text(
                                                   'L',
                                                   style: TextStyle(
                                                       fontSize: 20,

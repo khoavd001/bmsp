@@ -15,8 +15,11 @@ class Controller extends StatefulWidget {
   State<Controller> createState() => _ControllerState();
 }
 
-class _ControllerState extends State<Controller> {
-  List<bool> listStartStop = [false, false, false];
+class _ControllerState extends State<Controller>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+  List<bool> listStartStop = [false, false];
   bool tab = false;
   bool isStartPID = false;
   int selectLocal = 0;
@@ -184,63 +187,57 @@ class _ControllerState extends State<Controller> {
                       ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: listStartStop
                           .asMap()
                           .map((index, value) => MapEntry(
                               index,
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 20),
-                                      Image.asset(
-                                        value
-                                            ? 'assets/images/start_bms.png'
-                                            : 'assets/images/stop_bms.png',
-                                        height: 400,
-                                      ),
-                                      const SizedBox(height: 20),
-                                      Material(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(8)),
-                                        color: value
-                                            ? AppColors.primary2
-                                            : Colors.red,
-                                        child: InkWell(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(8)),
-                                          onTap: () {
-                                            setState(() {
-                                              listStartStop[index] =
-                                                  !listStartStop[index];
-                                              if (!value) {
-                                                databaseRefVanControl
-                                                    .child(
-                                                        'Override Value DO${index + 1}')
-                                                    .child('data')
-                                                    .set(1);
-                                              } else {
-                                                databaseRefVanControl
-                                                    .child(
-                                                        'Override Value DO${index + 1}')
-                                                    .child('data')
-                                                    .set(0);
-                                              }
-                                            });
-                                          },
-                                          splashColor: AppColors.neutral,
-                                          child: Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 30, vertical: 10),
-                                            child:
-                                                Text(value ? 'Start' : 'Stop'),
-                                          ),
-                                        ),
-                                      )
-                                    ],
+                              Column(
+                                children: [
+                                  const SizedBox(height: 20),
+                                  Image.asset(
+                                    value
+                                        ? 'assets/images/start_bms.png'
+                                        : 'assets/images/stop_bms.png',
+                                    height: 400,
                                   ),
-                                ),
+                                  const SizedBox(height: 20),
+                                  Material(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8)),
+                                    color:
+                                        value ? AppColors.primary2 : Colors.red,
+                                    child: InkWell(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(8)),
+                                      onTap: () {
+                                        setState(() {
+                                          listStartStop[index] =
+                                              !listStartStop[index];
+                                          if (!value) {
+                                            databaseRefVanControl
+                                                .child(
+                                                    'Override Value DO${index + 1}')
+                                                .child('data')
+                                                .set(1);
+                                          } else {
+                                            databaseRefVanControl
+                                                .child(
+                                                    'Override Value DO${index + 1}')
+                                                .child('data')
+                                                .set(0);
+                                          }
+                                        });
+                                      },
+                                      splashColor: AppColors.neutral,
+                                      child: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 30, vertical: 10),
+                                        child: Text(value ? 'Start' : 'Stop'),
+                                      ),
+                                    ),
+                                  )
+                                ],
                               )))
                           .values
                           .toList(),

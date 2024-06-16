@@ -1,11 +1,14 @@
 import 'dart:developer';
 
 import 'package:bmsp/controller.dart';
+import 'package:bmsp/data_manager.dart';
 import 'package:bmsp/login_screen.dart';
 import 'package:bmsp/monitor.dart';
 import 'package:bmsp/rsc/color_manager.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -40,7 +43,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     const SizedBox(
                       width: 20,
                     ),
-                    Image.asset('assets/images/logo.png'),
+                    Image.asset(
+                      'assets/images/logo_ute.png',
+                      height: 70,
+                    ),
                     const SizedBox(
                       width: 20,
                     ),
@@ -190,10 +196,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: const [
-                  Controller(),
-                  Monitor(),
-                  Center(
+                children: [
+                  const Controller(),
+                  const Monitor(),
+                  const Center(
                     child: Text(
                       'Place Bid',
                       style: TextStyle(
@@ -216,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     try {
       await _auth.signOut();
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (_) => LoginScreen()));
+          context, MaterialPageRoute(builder: (_) => const LoginScreen()));
     } catch (e) {
       log(e.toString());
     }

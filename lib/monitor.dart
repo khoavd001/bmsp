@@ -20,11 +20,7 @@ class Monitor extends StatefulWidget {
 class _MonitorState extends State<Monitor> {
   int _selectedIndex = 0;
   UnitEnum unitType = UnitEnum.voltage;
-  DatabaseReference databaseRef = FirebaseDatabase.instance
-      .ref()
-      .child('Monitor-Valve')
-      .child('Flow Water')
-      .child('data');
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -82,12 +78,10 @@ class _MonitorState extends State<Monitor> {
                 ),
               ),
               Flexible(
-                  flex: 4,
-                  child: ChangeNotifierProvider(
-                    create: (context) => DataModel(databaseRef),
-                    child: LineChartSample2(
-                        key: ValueKey(unitType.nameString), unitType: unitType),
-                  )),
+                flex: 4,
+                child: LineChartSample2(
+                    key: ValueKey(unitType.nameString), unitType: unitType),
+              ),
             ],
           ),
         ),

@@ -30,7 +30,6 @@ class DataModel extends ChangeNotifier {
     final day = DateTime.now().day;
     final month = DateTime.now().month;
     final year = DateTime.now().year;
-    double sum = 0;
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
 
     if (_axisX.isNotEmpty) {
@@ -40,7 +39,6 @@ class DataModel extends ChangeNotifier {
         try {
           String dateTimeStr = "$year-$month-$day $lastTimeStr";
           lastTime = dateFormat.parse(dateTimeStr);
-          sum = _dataPoints.reduce((value, element) => value + element);
         } catch (e) {
           print('Error parsing date: $e');
           return;
@@ -52,16 +50,18 @@ class DataModel extends ChangeNotifier {
 
     final number = double.parse(event.snapshot.value.toString());
     final between2Time = theNextTime.difference(lastTime).inSeconds;
+    _sumOutSide = (_sumOutSide + number / 60 * between2Time);
+
     log('between $between2Time');
     log('number: $number');
-    _dataPoints.add(sum + number / 60 * between2Time);
+    log('_sumOutSide: $_sumOutSide');
+    _dataPoints.add(_sumOutSide);
     _axisX.add(DateFormat('HH:mm:ss').format(DateTime.now()));
     _result.add(Result(
       time: DateFormat('HH:mm:ss').format(DateTime.now()),
       value: number,
     ));
 
-    _sumOutSide = (sum + number / 60 * between2Time);
     log(_sumOutSide.toString());
     notifyListeners();
   }
