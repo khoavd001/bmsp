@@ -77,12 +77,12 @@ enum UnitEnum {
     }
   }
 
-  int get divideNumber {
+  double get divideNumber {
     switch (this) {
       case voltage:
         return 100;
       case current:
-        return 1;
+        return 0.5;
       case frequency:
         return 10;
       case speed:
@@ -94,7 +94,7 @@ enum UnitEnum {
       case pressure:
         return 1;
       case power:
-        return 10;
+        return 0.5;
       default:
         return 1;
     }
@@ -109,7 +109,7 @@ enum UnitEnum {
       case frequency:
         return 'HZ';
       case speed:
-        return 'RPM';
+        return 'V/P';
       case flowWater:
         return 'l/m';
       case volume:

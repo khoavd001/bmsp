@@ -1,9 +1,12 @@
+import 'package:bmsp/data_manager.dart';
 import 'package:bmsp/line_chart.dart';
 import 'package:bmsp/rsc/color_manager.dart';
 import 'package:bmsp/util/enum/unit_enum.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class Monitor extends StatefulWidget {
   const Monitor({
@@ -17,7 +20,11 @@ class Monitor extends StatefulWidget {
 class _MonitorState extends State<Monitor> {
   int _selectedIndex = 0;
   UnitEnum unitType = UnitEnum.voltage;
-
+  DatabaseReference databaseRef = FirebaseDatabase.instance
+      .ref()
+      .child('Monitor-Valve')
+      .child('Flow Water')
+      .child('data');
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -76,8 +83,11 @@ class _MonitorState extends State<Monitor> {
               ),
               Flexible(
                   flex: 4,
-                  child: LineChartSample2(
-                      key: ValueKey(unitType.nameString), unitType: unitType)),
+                  child: ChangeNotifierProvider(
+                    create: (context) => DataModel(databaseRef),
+                    child: LineChartSample2(
+                        key: ValueKey(unitType.nameString), unitType: unitType),
+                  )),
             ],
           ),
         ),

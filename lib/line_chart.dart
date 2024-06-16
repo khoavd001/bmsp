@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:bmsp/data_manager.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:bmsp/rsc/color_manager.dart';
 import 'package:bmsp/util/enum/unit_enum.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class Result {
   String time;
@@ -73,15 +75,11 @@ class _LineChartSample2State extends State<LineChartSample2>
   }
 
   void addData(DatabaseEvent event) {
-    // Get the current date and time
-    DateTime now = DateTime.now();
-
-    // Extract year, month, and day
-    int year = now.year;
-    int month = now.month;
-    int day = now.day;
     var lastTime = DateTime.now();
     final theNextTime = DateTime.now();
+    final day = DateTime.now().day;
+    final month = DateTime.now().month;
+    final year = DateTime.now().year;
     double sum = 0;
     final dateFormat = DateFormat(
         'yyyy-MM-dd HH:mm:ss'); // Custom date format with date and time
@@ -118,7 +116,7 @@ class _LineChartSample2State extends State<LineChartSample2>
             : number);
     setState(() {
       // Update the animation progress when Slider value changes
-      _controller.value = (sum + number / 60 * between2Time) / 10;
+
       sumoutSide = (sum + number / 60 * between2Time) * 10;
     });
     _axisX.add(DateFormat('HH:mm:ss').format(DateTime.now()));
@@ -154,7 +152,9 @@ class _LineChartSample2State extends State<LineChartSample2>
           child: DataTable(
               columns: [
                 DataColumn(
-                  label: Text(widget.unitType.nameString),
+                  label: Text(widget.unitType.nameString == 'Volume'
+                      ? 'Flow Water'
+                      : widget.unitType.nameString),
                 ),
                 const DataColumn(
                   label: Text('Time'),
@@ -231,22 +231,27 @@ class _LineChartSample2State extends State<LineChartSample2>
                                                 fontSize: 20,
                                                 color: Colors.white),
                                           ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                '${sumoutSide.toStringAsFixed(2).replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")} ',
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white),
-                                              ),
-                                              Text(
-                                                'L',
-                                                style: TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white),
-                                              ),
-                                            ],
-                                          ),
+                                          Consumer<DataModel>(builder:
+                                              (context, dataModel, child) {
+                                            _controller.value =
+                                                dataModel.sumOutSide / 10;
+                                            return Row(
+                                              children: [
+                                                Text(
+                                                  '${dataModel.sumOutSide.toStringAsFixed(2).replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")} ',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.white),
+                                                ),
+                                                Text(
+                                                  'L',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.white),
+                                                ),
+                                              ],
+                                            );
+                                          }),
                                         ],
                                       ),
                                     ),
