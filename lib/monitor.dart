@@ -23,60 +23,94 @@ class _MonitorState extends State<Monitor> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Column(
       children: <Widget>[
+        size.width > 490
+            ? SizedBox()
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: List.generate(UnitEnum.values.length, (index) {
+                    return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 8),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: 150, // Adjust this width as necessary
+                          ),
+                          child: ListTile(
+                            leading: Image.asset(
+                              UnitEnum.values[index].imageString,
+                              height: 40,
+                            ),
+                            title: Text(UnitEnum.values[index].nameString),
+                            selected: index == _selectedIndex,
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = index;
+                                unitType = UnitEnum.values[index];
+                              });
+                            },
+                          ),
+                        ));
+                  }),
+                ),
+              ),
         Expanded(
           child: Row(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Flexible(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [
-                          Color.fromARGB(255, 255, 255, 255),
-                          AppColors.linear.withAlpha(100),
-                          AppColors.linear.withAlpha(150),
-                          AppColors.linear.withAlpha(100),
-                          Color.fromARGB(255, 242, 243, 247),
-                        ],
-                        stops: [
-                          0.1,
-                          0.4,
-                          0.5,
-                          0.6,
-                          0.9
-                        ],
-                        tileMode: TileMode.clamp,
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter),
-                  ),
-                  child: ListView.builder(
-                    itemCount: UnitEnum.values.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        child: ListTile(
-                          leading: Image.asset(
-                            UnitEnum.values[index].imageString,
-                            height: 40,
-                          ),
-                          title: Text(UnitEnum.values[index].nameString),
-                          selected: index == _selectedIndex,
-                          onTap: () {
-                            setState(() {
-                              _selectedIndex = index;
-                              unitType = UnitEnum.values[index];
-                            });
+              size.width < 490
+                  ? const SizedBox()
+                  : Flexible(
+                      flex: 1,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: [
+                                Color.fromARGB(255, 255, 255, 255),
+                                AppColors.linear.withAlpha(100),
+                                AppColors.linear.withAlpha(150),
+                                AppColors.linear.withAlpha(100),
+                                Color.fromARGB(255, 242, 243, 247),
+                              ],
+                              stops: [
+                                0.1,
+                                0.4,
+                                0.5,
+                                0.6,
+                                0.9
+                              ],
+                              tileMode: TileMode.clamp,
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter),
+                        ),
+                        child: ListView.builder(
+                          itemCount: UnitEnum.values.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              child: ListTile(
+                                leading: Image.asset(
+                                  UnitEnum.values[index].imageString,
+                                  height: 40,
+                                ),
+                                title: Text(UnitEnum.values[index].nameString),
+                                selected: index == _selectedIndex,
+                                onTap: () {
+                                  setState(() {
+                                    _selectedIndex = index;
+                                    unitType = UnitEnum.values[index];
+                                  });
+                                },
+                              ),
+                            );
                           },
                         ),
-                      );
-                    },
-                  ),
-                ),
-              ),
+                      ),
+                    ),
               Flexible(
                 flex: 4,
                 child: LineChartSample2(

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bmsp/controller.dart';
 import 'package:bmsp/data_manager.dart';
+import 'package:bmsp/firebase_options.dart';
 import 'package:bmsp/home_page.dart';
 import 'package:bmsp/login_screen.dart';
 import 'package:bmsp/monitor.dart';
@@ -16,16 +17,22 @@ import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-      options: const FirebaseOptions(
-          apiKey: "AIzaSyBEv-R-ldgNqPRe9bISG8ldIx3ntbKl7ok",
-          appId: "1:541058254186:web:8f82c95d07c87629cf5113",
-          messagingSenderId: "541058254186",
-          projectId: "datapump-9d6d8",
-          databaseURL: "https://datapump-9d6d8-default-rtdb.firebaseio.com"));
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: "AIzaSyBEv-R-ldgNqPRe9bISG8ldIx3ntbKl7ok",
+            appId: "1:541058254186:web:8f82c95d07c87629cf5113",
+            messagingSenderId: "541058254186",
+            projectId: "datapump-9d6d8",
+            databaseURL: "https://datapump-9d6d8-default-rtdb.firebaseio.com"));
+  } else {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+  }
   runApp(const MyApp());
 }
 
