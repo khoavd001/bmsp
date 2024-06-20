@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "541058254186",
+    "firebase_url": "https://datapump-9d6d8-default-rtdb.firebaseio.com",
+    "project_id": "datapump-9d6d8",
+    "storage_bucket": "datapump-9d6d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:541058254186:android:65a8fefaa1c39b76cf5113",
+        "android_client_info": {
+          "package_name": "com.example.bmsp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "541058254186-87njipc0qfso5fbn6kuruqjgjqa6hltf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bmsp",
+            "certificate_hash": "af2488d290a5ec3ff87ea6dd7fb479b05682ffb1"
+          }
+        },
+        {
+          "client_id": "541058254186-65gu29b57mnts9116a69lcupu7up2fvo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ-o_vS5lMzt0RRUl64DbekoIpvK-l4Iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "110074396183402007100",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

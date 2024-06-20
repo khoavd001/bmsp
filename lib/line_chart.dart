@@ -142,6 +142,7 @@ class _LineChartSample2State extends State<LineChartSample2>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Row(
       children: [
         const SizedBox(
@@ -180,127 +181,136 @@ class _LineChartSample2State extends State<LineChartSample2>
             color: Colors.grey,
           ),
         ),
-        Expanded(
-          child: Stack(
-            children: <Widget>[
-              AspectRatio(
-                aspectRatio: 1.70,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    right: 18,
-                    left: 12,
-                    top: 24,
-                    bottom: 12,
-                  ),
-                  child: widget.unitType == UnitEnum.volume
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Stack(
-                              children: [
-                                Column(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.only(left: 10),
-                                      width: 140,
-                                      height: 160,
-                                      decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 47, 130, 246),
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(20)),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: const Color.fromARGB(
-                                                      255, 17, 104, 255)
-                                                  .withOpacity(0.5),
-                                              blurRadius: 10,
-                                              offset: const Offset(0, 15),
-                                            ),
-                                          ]),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+        size.width < 490
+            ? const SizedBox()
+            : Expanded(
+                child: Stack(
+                  children: <Widget>[
+                    AspectRatio(
+                      aspectRatio: 1.70,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          right: 18,
+                          left: 12,
+                          top: 24,
+                          bottom: 12,
+                        ),
+                        child: widget.unitType == UnitEnum.volume
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Stack(
+                                    children: [
+                                      Column(
                                         children: [
-                                          const SizedBox(
-                                            height: 20,
-                                          ),
-                                          const Text(
-                                            'Volume',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.white),
-                                          ),
-                                          Consumer<DataModel>(builder:
-                                              (context, dataModel, child) {
-                                            _controller.value =
-                                                dataModel.sumOutSide / 100;
-                                            return Row(
+                                          Container(
+                                            padding:
+                                                const EdgeInsets.only(left: 10),
+                                            width: 140,
+                                            height: 160,
+                                            decoration: BoxDecoration(
+                                                color: const Color.fromARGB(
+                                                    255, 47, 130, 246),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(20)),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: const Color.fromARGB(
+                                                            255, 17, 104, 255)
+                                                        .withOpacity(0.5),
+                                                    blurRadius: 10,
+                                                    offset: const Offset(0, 15),
+                                                  ),
+                                                ]),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  '${dataModel.sumOutSide.toStringAsFixed(2).replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")} ',
-                                                  style: const TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.white),
+                                                const SizedBox(
+                                                  height: 20,
                                                 ),
                                                 const Text(
-                                                  'L',
+                                                  'Volume',
                                                   style: TextStyle(
                                                       fontSize: 20,
                                                       color: Colors.white),
                                                 ),
+                                                Consumer<DataModel>(builder:
+                                                    (context, dataModel,
+                                                        child) {
+                                                  _controller.value =
+                                                      dataModel.sumOutSide /
+                                                          100;
+                                                  return Row(
+                                                    children: [
+                                                      Text(
+                                                        '${dataModel.sumOutSide.toStringAsFixed(2).replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")} ',
+                                                        style: const TextStyle(
+                                                            fontSize: 20,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                      const Text(
+                                                        'L',
+                                                        style: TextStyle(
+                                                            fontSize: 20,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ],
+                                                  );
+                                                }),
                                               ],
-                                            );
-                                          }),
+                                            ),
+                                          ),
                                         ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    const SizedBox(height: 50),
-                                    Lottie.asset('assets/images/cloud.json',
-                                        height: 120),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Lottie.asset(
-                              'assets/images/volumn.json',
-                              controller: _controller,
-                            ),
-                          ],
-                        )
-                      : LineChart(
-                          duration: const Duration(seconds: 1),
-                          showAvg ? avgData() : mainData(),
-                        ),
-                ),
-              ),
-              SizedBox(
-                width: 60,
-                height: 34,
-                child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      showAvg = !showAvg;
-                    });
-                  },
-                  child: Text(
-                    'avg',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: showAvg
-                          ? Colors.white.withOpacity(0.5)
-                          : Colors.white,
+                                      Column(
+                                        children: [
+                                          const SizedBox(height: 50),
+                                          Lottie.asset(
+                                              'assets/images/cloud.json',
+                                              height: 120),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Lottie.asset(
+                                    'assets/images/volumn.json',
+                                    controller: _controller,
+                                  ),
+                                ],
+                              )
+                            : LineChart(
+                                duration: const Duration(seconds: 1),
+                                showAvg ? avgData() : mainData(),
+                              ),
+                      ),
                     ),
-                  ),
+                    SizedBox(
+                      width: 60,
+                      height: 34,
+                      child: TextButton(
+                        onPressed: () {
+                          setState(() {
+                            showAvg = !showAvg;
+                          });
+                        },
+                        child: Text(
+                          'avg',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: showAvg
+                                ? Colors.white.withOpacity(0.5)
+                                : Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
       ],
     );
   }

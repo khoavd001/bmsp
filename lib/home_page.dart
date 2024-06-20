@@ -27,8 +27,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
+      bottomNavigationBar: size.width < 490 ? _renderTabBar() : null,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -92,104 +94,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 const Spacer(),
                 SizedBox(
                   width: 700,
-                  child: TabBar(
-                    dividerColor: Colors.transparent,
-                    indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(
-                        10.0,
-                      ),
-                      border: Border.all(color: AppColors.primary),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.blueAccent.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    splashBorderRadius: BorderRadius.circular(
-                      10.0,
-                    ),
-                    labelColor: AppColors.primary,
-                    labelStyle: const TextStyle(fontWeight: FontWeight.w700),
-                    unselectedLabelColor: AppColors.neutral,
-                    controller: _tabController,
-                    tabs: <Widget>[
-                      Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          border: Border.all(
-                            color: Colors.grey.withAlpha(50),
-                          ),
-                        ),
-                        width: double.infinity,
-                        child: const Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.monitor_rounded),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
-                                child: Text('Controller'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          border: Border.all(
-                            color: Colors.grey.withAlpha(50),
-                          ),
-                        ),
-                        width: double.infinity,
-                        child: const Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.construction),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
-                                child: Text('Mornitor'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                          border: Border.all(
-                            color: Colors.grey.withAlpha(50),
-                          ),
-                        ),
-                        width: double.infinity,
-                        child: const Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.description_outlined),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
-                                child: Text('About'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: size.width < 490 ? null : _renderTabBar(),
                 ),
               ],
             ),
@@ -214,6 +119,125 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           ],
         ),
       ),
+    );
+  }
+
+  TabBar _renderTabBar() {
+    final size = MediaQuery.of(context).size;
+    return TabBar(
+      dividerColor: Colors.transparent,
+      indicator: size.width < 490
+          ? null
+          : BoxDecoration(
+              borderRadius: BorderRadius.circular(
+                10.0,
+              ),
+              border: Border.all(color: AppColors.primary),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.blueAccent.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+      splashBorderRadius: BorderRadius.circular(
+        10.0,
+      ),
+      labelColor: AppColors.primary,
+      labelStyle: const TextStyle(fontWeight: FontWeight.w700),
+      unselectedLabelColor: AppColors.neutral,
+      controller: _tabController,
+      tabs: size.width < 490
+          ? [
+              const Tab(
+                text: "Controller",
+                icon: Icon(Icons.construction),
+              ),
+              const Tab(
+                text: "Mornitor",
+                icon: Icon(Icons.monitor_rounded),
+              ),
+              const Tab(
+                text: "About",
+                icon: Icon(Icons.description_outlined),
+              ),
+            ]
+          : <Widget>[
+              Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  border: Border.all(
+                    color: Colors.grey.withAlpha(50),
+                  ),
+                ),
+                width: double.infinity,
+                child: const Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.construction),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: Text('Controller'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  border: Border.all(
+                    color: Colors.grey.withAlpha(50),
+                  ),
+                ),
+                width: double.infinity,
+                child: const Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.monitor_rounded),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: Text('Mornitor'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(10),
+                  ),
+                  border: Border.all(
+                    color: Colors.grey.withAlpha(50),
+                  ),
+                ),
+                width: double.infinity,
+                child: const Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.description_outlined),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: Text('About'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
     );
   }
 

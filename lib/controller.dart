@@ -105,279 +105,356 @@ class _ControllerState extends State<Controller>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Row(
-      children: [
-        Flexible(
-          flex: 1,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [
-                    const Color.fromARGB(255, 255, 255, 255),
-                    AppColors.linear.withAlpha(100),
-                    const Color.fromARGB(255, 255, 255, 255),
-                  ],
-                  stops: const [
-                    0.1,
-                    0.4,
-                    0.5,
-                  ],
-                  tileMode: TileMode.clamp,
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter),
-            ),
-            child: Column(
-              children: [
-                const SizedBox(height: 60),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: ListTile(
-                    leading: const Icon(Icons.settings),
-                    title: const Text('Setting Parameter'),
-                    selected: tab == false,
-                    onTap: () {
-                      setState(() {
-                        tab = false;
-                      });
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: ListTile(
-                    leading: const Icon(Icons.construction_outlined),
-                    title: const Text('Control System'),
-                    selected: tab == true,
-                    onTap: () {
-                      setState(() {
-                        tab = true;
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Flexible(
-          flex: 4,
-          child: tab
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          size.width < 490
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        const SizedBox(width: 20),
-                        SwitchExample(
-                          isStart: isStartVan,
-                          onTap: (val) {
-                            setState(() {
-                              isStartVan = val;
-                              if (isStartVan) {
-                                databaseRef.child('Run').child('Data').set(2);
-                              } else {
-                                databaseRef.child('Run').child('Data').set(1);
-                              }
-                            });
-                          },
-                          startTitle: 'Start',
-                          stopTitle: 'Stop',
+                    InkWell(
+                      onTap: () => setState(() {
+                        tab = false;
+                      }),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(width: 1.5, color: Colors.grey),
+                          ),
                         ),
-                      ],
+                        child: const Text('Setting Parameter'),
+                      ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: listStartStop
-                          .asMap()
-                          .map((index, value) => MapEntry(
-                              index,
-                              Column(
-                                children: [
-                                  const SizedBox(height: 20),
-                                  Image.asset(
-                                    value
-                                        ? 'assets/images/start_bms.png'
-                                        : 'assets/images/stop_bms.png',
-                                    height: 400,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Material(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8)),
-                                    color:
-                                        value ? AppColors.primary2 : Colors.red,
-                                    child: InkWell(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(8)),
-                                      onTap: () {
-                                        setState(() {
-                                          listStartStop[index] =
-                                              !listStartStop[index];
-                                          if (!value) {
-                                            databaseRefVanControl
-                                                .child(
-                                                    'Override Value DO${index + 1}')
-                                                .child('data')
-                                                .set(1);
-                                          } else {
-                                            databaseRefVanControl
-                                                .child(
-                                                    'Override Value DO${index + 1}')
-                                                .child('data')
-                                                .set(0);
-                                          }
-                                        });
-                                      },
-                                      splashColor: AppColors.neutral,
-                                      child: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 30, vertical: 10),
-                                        child: Text(value ? 'Start' : 'Stop'),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )))
-                          .values
-                          .toList(),
+                    const SizedBox(width: 15),
+                    InkWell(
+                      onTap: () => setState(() {
+                        tab = true;
+                      }),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(width: 1.5, color: Colors.grey),
+                          ),
+                        ),
+                        child: const Text('Control System'),
+                      ),
                     ),
+                    const SizedBox(width: 15),
                   ],
                 )
-              : _renderParameter(size, (val) {
+              : const SizedBox(),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              size.width < 490 ? const SizedBox() : _renderDrawNav(),
+              Flexible(
+                flex: size.width > 490 ? 4 : 1,
+                child: tab
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              const SizedBox(width: 20),
+                              SwitchExample(
+                                isStart: isStartVan,
+                                onTap: (val) {
+                                  setState(() {
+                                    isStartVan = val;
+                                    if (isStartVan) {
+                                      databaseRef
+                                          .child('Run')
+                                          .child('Data')
+                                          .set(2);
+                                    } else {
+                                      databaseRef
+                                          .child('Run')
+                                          .child('Data')
+                                          .set(1);
+                                    }
+                                  });
+                                },
+                                startTitle: 'Start',
+                                stopTitle: 'Stop',
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: listStartStop
+                                .asMap()
+                                .map((index, value) => MapEntry(
+                                    index,
+                                    Column(
+                                      children: [
+                                        const SizedBox(height: 20),
+                                        Image.asset(
+                                          value
+                                              ? 'assets/images/start_bms.png'
+                                              : 'assets/images/stop_bms.png',
+                                          height: 400,
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Material(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(8)),
+                                          color: value
+                                              ? AppColors.primary2
+                                              : Colors.red,
+                                          child: InkWell(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(8)),
+                                            onTap: () {
+                                              setState(() {
+                                                listStartStop[index] =
+                                                    !listStartStop[index];
+                                                if (!value) {
+                                                  databaseRefVanControl
+                                                      .child(
+                                                          'Override Value DO${index + 1}')
+                                                      .child('data')
+                                                      .set(1);
+                                                } else {
+                                                  databaseRefVanControl
+                                                      .child(
+                                                          'Override Value DO${index + 1}')
+                                                      .child('data')
+                                                      .set(0);
+                                                }
+                                              });
+                                            },
+                                            splashColor: AppColors.neutral,
+                                            child: Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 30,
+                                                      vertical: 10),
+                                              child: Text(
+                                                  value ? 'Start' : 'Stop'),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )))
+                                .values
+                                .toList(),
+                          ),
+                        ],
+                      )
+                    : _renderParameter(size, (val) {
+                        setState(() {
+                          isStartPID = val;
+                          if (isStartPID) {
+                            databaseRef.child('PIDselect').child('Data').set(1);
+                          } else {
+                            databaseRef.child('PIDselect').child('Data').set(0);
+                          }
+                        });
+                      }, isStartPID),
+              )
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Flexible _renderDrawNav() {
+    return Flexible(
+      flex: 1,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [
+                const Color.fromARGB(255, 255, 255, 255),
+                AppColors.linear.withAlpha(100),
+                const Color.fromARGB(255, 255, 255, 255),
+              ],
+              stops: const [
+                0.1,
+                0.4,
+                0.5,
+              ],
+              tileMode: TileMode.clamp,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 60),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ListTile(
+                leading: const Icon(Icons.settings),
+                title: const Text('Setting Parameter'),
+                selected: tab == false,
+                onTap: () {
                   setState(() {
-                    isStartPID = val;
-                    if (isStartPID) {
-                      databaseRef.child('PIDselect').child('Data').set(1);
-                    } else {
-                      databaseRef.child('PIDselect').child('Data').set(0);
-                    }
+                    tab = false;
                   });
-                }, isStartPID),
-        )
-      ],
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: ListTile(
+                leading: const Icon(Icons.construction_outlined),
+                title: const Text('Control System'),
+                selected: tab == true,
+                onTap: () {
+                  setState(() {
+                    tab = true;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _renderParameter(Size size, Function(bool)? onTap, bool isStart) {
-    return Row(
+    return Column(
       children: [
-        const SizedBox(width: 30),
-        Column(
+        Row(
           children: [
-            const SizedBox(height: 20),
-            FlutterToggleTab(
-              icons: const [Icons.back_hand_rounded, Icons.monitor_sharp],
-              width: 30,
-              borderRadius: 15,
-              height: 50,
-              selectedIndex: selectLocal,
-              selectedBackgroundColors: const [Colors.blue, Colors.blueAccent],
-              selectedTextStyle: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700),
-              unSelectedTextStyle: const TextStyle(
-                  color: Colors.black87,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500),
-              labels: const ['Local', 'Remote'],
-              selectedLabelIndex: (index) {},
-              isScroll: false,
+            const SizedBox(width: 30),
+            Column(
+              children: [
+                const SizedBox(height: 20),
+                FlutterToggleTab(
+                  icons: const [Icons.back_hand_rounded, Icons.monitor_sharp],
+                  width: size.width > 490 ? 30 : size.width * 0.2,
+                  borderRadius: 15,
+                  height: 50,
+                  selectedIndex: selectLocal,
+                  selectedBackgroundColors: const [
+                    Colors.blue,
+                    Colors.blueAccent
+                  ],
+                  selectedTextStyle: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700),
+                  unSelectedTextStyle: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500),
+                  labels: const ['Local', 'Remote'],
+                  selectedLabelIndex: (index) {},
+                  isScroll: false,
+                ),
+                const SizedBox(height: 20),
+                _renderTextField(size, 'Frequency', onChange: (value) {
+                  listValue[0] = value;
+                }, onTap: () {
+                  _dialogBuilder(context, () {
+                    databaseRef
+                        .child('Frequency')
+                        .child('Data')
+                        .set(listValue[0]);
+                    Navigator.pop(context);
+                  });
+                }),
+                const SizedBox(height: 20),
+                _renderTextField(size, 'Acceleration', onChange: (value) {
+                  listValue[1] = value;
+                }, onTap: () {
+                  _dialogBuilder(context, () {
+                    databaseRef.child('Acc').child('Data').set(listValue[1]);
+                    Navigator.pop(context);
+                  });
+                }),
+                const SizedBox(height: 20),
+                _renderTextField(size, 'Deceleration', onChange: (value) {
+                  listValue[2] = value;
+                }, onTap: () {
+                  _dialogBuilder(context, () {
+                    databaseRef.child('Dec').child('Data').set(listValue[2]);
+                    Navigator.pop(context);
+                  });
+                }),
+                const SizedBox(height: 20),
+              ],
             ),
-            const SizedBox(height: 20),
-            _renderTextField(size, 'Frequency', onChange: (value) {
-              listValue[0] = value;
-            }, onTap: () {
-              _dialogBuilder(context, () {
-                databaseRef.child('Frequency').child('Data').set(listValue[0]);
-                Navigator.pop(context);
-              });
-            }),
-            const SizedBox(height: 20),
-            _renderTextField(size, 'Acceleration', onChange: (value) {
-              listValue[1] = value;
-            }, onTap: () {
-              _dialogBuilder(context, () {
-                databaseRef.child('Acc').child('Data').set(listValue[1]);
-                Navigator.pop(context);
-              });
-            }),
-            const SizedBox(height: 20),
-            _renderTextField(size, 'Deceleration', onChange: (value) {
-              listValue[2] = value;
-            }, onTap: () {
-              _dialogBuilder(context, () {
-                databaseRef.child('Dec').child('Data').set(listValue[2]);
-                Navigator.pop(context);
-              });
-            }),
-            const SizedBox(height: 20),
+            size.width < 490
+                ? const SizedBox()
+                : const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    child: VerticalDivider(
+                      width: 20,
+                      thickness: 1,
+                      indent: 20,
+                      endIndent: 0,
+                      color: Colors.grey,
+                    ),
+                  ),
+            size.width < 490
+                ? const SizedBox()
+                : _renderPID(isStart, onTap, size),
           ],
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: VerticalDivider(
-            width: 20,
-            thickness: 1,
-            indent: 20,
-            endIndent: 0,
-            color: Colors.grey,
-          ),
+        size.width > 490
+            ? const SizedBox()
+            : Padding(
+                padding: const EdgeInsets.only(left: 30),
+                child: _renderPID(isStart, onTap, size),
+              ),
+      ],
+    );
+  }
+
+  Column _renderPID(bool isStart, Function(bool)? onTap, Size size) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        SwitchExample(
+          isStart: isStart,
+          onTap: onTap,
+          startTitle: 'PID ON',
+          stopTitle: 'PID OFF',
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            SwitchExample(
-              isStart: isStart,
-              onTap: onTap,
-              startTitle: 'PID ON',
-              stopTitle: 'PID OFF',
-            ),
-            const SizedBox(height: 20),
-            _renderTextField(size, 'PID Ref', isEnable: isStart,
-                onChange: (value) {
-              listValue[3] = value;
-            }, onTap: () {
-              _dialogBuilder(context, () {
-                databaseRef
-                    .child('PID Reference')
-                    .child('Data')
-                    .set(listValue[3]);
-                Navigator.pop(context);
-              });
-            }),
-            const SizedBox(height: 20),
-            _renderTextField(size, 'P', isEnable: isStart, onChange: (value) {
-              listValue[4] = value;
-            }, onTap: () {
-              _dialogBuilder(context, () {
-                databaseRef.child('P gain').child('Data').set(listValue[4]);
-                Navigator.pop(context);
-              });
-            }),
-            const SizedBox(height: 20),
-            _renderTextField(size, 'I', isEnable: isStart, onChange: (value) {
-              listValue[5] = value;
-            }, onTap: () {
-              _dialogBuilder(context, () {
-                databaseRef.child('I Gain').child('Data').set(listValue[5]);
-                Navigator.pop(context);
-              });
-            }),
-            const SizedBox(height: 20),
-            _renderTextField(size, 'D', isEnable: isStart, onChange: (value) {
-              listValue[6] = value;
-            }, onTap: () {
-              _dialogBuilder(context, () {
-                databaseRef.child('D Gain').child('Data').set(listValue[6]);
-                Navigator.pop(context);
-              });
-            }),
-            const SizedBox(height: 20),
-          ],
-        ),
+        const SizedBox(height: 20),
+        _renderTextField(size, 'PID Ref', isEnable: isStart, onChange: (value) {
+          listValue[3] = value;
+        }, onTap: () {
+          _dialogBuilder(context, () {
+            databaseRef.child('PID Reference').child('Data').set(listValue[3]);
+            Navigator.pop(context);
+          });
+        }),
+        const SizedBox(height: 20),
+        _renderTextField(size, 'P', isEnable: isStart, onChange: (value) {
+          listValue[4] = value;
+        }, onTap: () {
+          _dialogBuilder(context, () {
+            databaseRef.child('P gain').child('Data').set(listValue[4]);
+            Navigator.pop(context);
+          });
+        }),
+        const SizedBox(height: 20),
+        _renderTextField(size, 'I', isEnable: isStart, onChange: (value) {
+          listValue[5] = value;
+        }, onTap: () {
+          _dialogBuilder(context, () {
+            databaseRef.child('I Gain').child('Data').set(listValue[5]);
+            Navigator.pop(context);
+          });
+        }),
+        const SizedBox(height: 20),
+        _renderTextField(size, 'D', isEnable: isStart, onChange: (value) {
+          listValue[6] = value;
+        }, onTap: () {
+          _dialogBuilder(context, () {
+            databaseRef.child('D Gain').child('Data').set(listValue[6]);
+            Navigator.pop(context);
+          });
+        }),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -386,8 +463,9 @@ class _ControllerState extends State<Controller>
       {bool? isEnable, VoidCallback? onTap, Function(String)? onChange}) {
     return SizedBox(
       height: 60,
-      width: size.width * 0.3,
+      width: size.width > 490 ? size.width * 0.3 : size.width * 0.8,
       child: TextFormField(
+        keyboardType: TextInputType.number,
         onChanged: onChange,
         decoration: InputDecoration(
             labelStyle: const TextStyle(fontSize: 25),
@@ -428,40 +506,6 @@ class _ControllerState extends State<Controller>
               ),
             )),
         enabled: isEnable,
-      ),
-    );
-  }
-}
-
-class ControlWidget extends StatelessWidget {
-  const ControlWidget({
-    super.key,
-    required this.listStartStop,
-  });
-
-  final List<bool> listStartStop;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: listStartStop
-              .asMap()
-              .map((key, value) => MapEntry(
-                  key,
-                  Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/stop_bms.png',
-                        height: 500,
-                      )
-                    ],
-                  )))
-              .values
-              .toList(),
-        ),
       ),
     );
   }
