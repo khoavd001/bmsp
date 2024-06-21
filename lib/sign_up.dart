@@ -43,6 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 113, 177, 250),
@@ -61,7 +62,8 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 500),
+          padding:
+              EdgeInsets.symmetric(horizontal: size.width < 490 ? 16 : 500),
           child: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),

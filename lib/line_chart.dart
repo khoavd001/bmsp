@@ -42,7 +42,6 @@ class _LineChartSample2State extends State<LineChartSample2>
   List<String> _axisX = [];
   List<Result> result = [];
   double sumoutSide = 0;
-  late Timer _timer;
   // Create an AnimationController
   late AnimationController _controller;
   @override
@@ -134,7 +133,7 @@ class _LineChartSample2State extends State<LineChartSample2>
   @override
   void dispose() {
     _controller.dispose();
-    _timer.cancel(); // Cancel the timer when the widget is disposed
+
     super.dispose();
   }
 
@@ -143,179 +142,195 @@ class _LineChartSample2State extends State<LineChartSample2>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Row(
+    return Column(
       children: [
-        const SizedBox(
-          width: 16,
-        ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 500),
-          child: DataTable(
-              columns: [
-                DataColumn(
-                  label: Text(widget.unitType.nameString == 'Volume'
-                      ? 'Flow Water'
-                      : widget.unitType.nameString),
-                ),
-                const DataColumn(
-                  label: Text('Time'),
-                ),
-              ],
-              rows: result
-                  .map(
-                    (e) => DataRow(cells: [
-                      DataCell(Text(
-                          '${e.value.toString()} ${widget.unitType.unitString}')),
-                      DataCell(Text(e.time)),
-                    ]),
-                  )
-                  .toList()),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: VerticalDivider(
-            width: 20,
-            thickness: 1,
-            indent: 20,
-            endIndent: 0,
-            color: Colors.grey,
-          ),
-        ),
-        size.width < 490
-            ? const SizedBox()
-            : Expanded(
-                child: Stack(
-                  children: <Widget>[
-                    AspectRatio(
-                      aspectRatio: 1.70,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          right: 18,
-                          left: 12,
-                          top: 24,
-                          bottom: 12,
+        size.width < 490 ? _renderChart() : const SizedBox(),
+        Row(
+          mainAxisAlignment: size.width < 490
+              ? MainAxisAlignment.center
+              : MainAxisAlignment.start,
+          children: [
+            const SizedBox(
+              width: 16,
+            ),
+            SizedBox(
+              height: 250,
+              child: SingleChildScrollView(
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 500),
+                  child: DataTable(
+                      columns: [
+                        DataColumn(
+                          label: Text(widget.unitType.nameString == 'Volume'
+                              ? 'Flow Water'
+                              : widget.unitType.nameString),
                         ),
-                        child: widget.unitType == UnitEnum.volume
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Stack(
-                                    children: [
-                                      Column(
-                                        children: [
-                                          Container(
-                                            padding:
-                                                const EdgeInsets.only(left: 10),
-                                            width: 140,
-                                            height: 160,
-                                            decoration: BoxDecoration(
-                                                color: const Color.fromARGB(
-                                                    255, 47, 130, 246),
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(20)),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: const Color.fromARGB(
-                                                            255, 17, 104, 255)
-                                                        .withOpacity(0.5),
-                                                    blurRadius: 10,
-                                                    offset: const Offset(0, 15),
-                                                  ),
-                                                ]),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const SizedBox(
-                                                  height: 20,
-                                                ),
-                                                const Text(
-                                                  'Volume',
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      color: Colors.white),
-                                                ),
-                                                Consumer<DataModel>(builder:
-                                                    (context, dataModel,
-                                                        child) {
-                                                  _controller.value =
-                                                      dataModel.sumOutSide /
-                                                          100;
-                                                  return Row(
-                                                    children: [
-                                                      Text(
-                                                        '${dataModel.sumOutSide.toStringAsFixed(2).replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")} ',
-                                                        style: const TextStyle(
-                                                            fontSize: 20,
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      const Text(
-                                                        'L',
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                    ],
-                                                  );
-                                                }),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Column(
-                                        children: [
-                                          const SizedBox(height: 50),
-                                          Lottie.asset(
-                                              'assets/images/cloud.json',
-                                              height: 120),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  Lottie.asset(
-                                    'assets/images/volumn.json',
-                                    controller: _controller,
-                                  ),
-                                ],
-                              )
-                            : LineChart(
-                                duration: const Duration(seconds: 1),
-                                showAvg ? avgData() : mainData(),
-                              ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 60,
-                      height: 34,
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            showAvg = !showAvg;
-                          });
-                        },
-                        child: Text(
-                          'avg',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: showAvg
-                                ? Colors.white.withOpacity(0.5)
-                                : Colors.white,
-                          ),
+                        const DataColumn(
+                          label: Text('Time'),
                         ),
-                      ),
-                    ),
-                  ],
+                      ],
+                      rows: (size.width < 490 ? result.reversed : result)
+                          .map(
+                            (e) => DataRow(cells: [
+                              DataCell(Text(
+                                  '${e.value.toString()} ${widget.unitType.unitString}')),
+                              DataCell(Text(e.time)),
+                            ]),
+                          )
+                          .toList()),
                 ),
               ),
+            ),
+            size.width < 490
+                ? const SizedBox()
+                : const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    child: VerticalDivider(
+                      width: 20,
+                      thickness: 1,
+                      indent: 20,
+                      endIndent: 0,
+                      color: Colors.grey,
+                    ),
+                  ),
+            size.width < 490 ? const SizedBox() : _renderChart(),
+          ],
+        ),
       ],
     );
   }
 
+  Expanded _renderChart() {
+    return Expanded(
+      child: Stack(
+        children: <Widget>[
+          AspectRatio(
+            aspectRatio: 1.70,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                right: 18,
+                left: 12,
+                top: 24,
+                bottom: 12,
+              ),
+              child: widget.unitType == UnitEnum.volume
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            Stack(
+                              children: [
+                                Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      width: 140,
+                                      height: 160,
+                                      decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 47, 130, 246),
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(20)),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color.fromARGB(
+                                                      255, 17, 104, 255)
+                                                  .withOpacity(0.5),
+                                              blurRadius: 10,
+                                              offset: const Offset(0, 15),
+                                            ),
+                                          ]),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          const Text(
+                                            'Volume',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
+                                          Consumer<DataModel>(builder:
+                                              (context, dataModel, child) {
+                                            if (!mounted) {
+                                              _controller.value =
+                                                  dataModel.sumOutSide / 100;
+                                            }
+                                            return Row(
+                                              children: [
+                                                Text(
+                                                  '${dataModel.sumOutSide.toStringAsFixed(2).replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")} ',
+                                                  style: const TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.white),
+                                                ),
+                                                const Text(
+                                                  'L',
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      color: Colors.white),
+                                                ),
+                                              ],
+                                            );
+                                          }),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const SizedBox(height: 50),
+                                    Lottie.asset('assets/images/cloud.json',
+                                        height: 120),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Lottie.asset(
+                          'assets/images/volumn.json',
+                          controller: _controller,
+                        ),
+                      ],
+                    )
+                  : LineChart(
+                      duration: const Duration(seconds: 1),
+                      showAvg ? avgData() : mainData(),
+                    ),
+            ),
+          ),
+          SizedBox(
+            width: 60,
+            height: 34,
+            child: TextButton(
+              onPressed: () {
+                setState(() {
+                  showAvg = !showAvg;
+                });
+              },
+              child: Text(
+                'avg',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    final size = MediaQuery.of(context).size;
+    if (size.width < 490) return const SizedBox();
     const style = TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 16,
@@ -383,41 +398,42 @@ class _LineChartSample2State extends State<LineChartSample2>
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
+    final size = MediaQuery.of(context).size;
+    var style = TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 15,
+      fontSize: size.width < 490 ? 10 : 15,
     );
     String text;
     switch (value.toInt()) {
       case 1:
-        text = '${1 * widget.unitType.divideNumber}';
+        text = '${1 * widget.unitType.divideNumber.toInt()}';
         break;
       case 2:
-        text = '${2 * widget.unitType.divideNumber}';
+        text = '${2 * widget.unitType.divideNumber.toInt()}';
         break;
       case 3:
-        text = '${3 * widget.unitType.divideNumber}';
+        text = '${3 * widget.unitType.divideNumber.toInt()}';
         break;
       case 4:
-        text = '${4 * widget.unitType.divideNumber}';
+        text = '${4 * widget.unitType.divideNumber.toInt()}';
         break;
       case 5:
-        text = '${5 * widget.unitType.divideNumber}';
+        text = '${5 * widget.unitType.divideNumber.toInt()}';
         break;
       case 6:
-        text = '${6 * widget.unitType.divideNumber}';
+        text = '${6 * widget.unitType.divideNumber.toInt()}';
         break;
       case 7:
-        text = '${7 * widget.unitType.divideNumber}';
+        text = '${7 * widget.unitType.divideNumber.toInt()}';
         break;
       case 8:
-        text = '${8 * widget.unitType.divideNumber}';
+        text = '${8 * widget.unitType.divideNumber.toInt()}';
         break;
       case 9:
-        text = '${9 * widget.unitType.divideNumber}';
+        text = '${9 * widget.unitType.divideNumber.toInt()}';
         break;
       case 10:
-        text = '${10 * widget.unitType.divideNumber}';
+        text = '${10 * widget.unitType.divideNumber.toInt()}';
         break;
 
       default:

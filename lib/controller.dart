@@ -108,41 +108,7 @@ class _ControllerState extends State<Controller>
     return SingleChildScrollView(
       child: Column(
         children: [
-          size.width < 490
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    InkWell(
-                      onTap: () => setState(() {
-                        tab = false;
-                      }),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(width: 1.5, color: Colors.grey),
-                          ),
-                        ),
-                        child: const Text('Setting Parameter'),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    InkWell(
-                      onTap: () => setState(() {
-                        tab = true;
-                      }),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(width: 1.5, color: Colors.grey),
-                          ),
-                        ),
-                        child: const Text('Control System'),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                  ],
-                )
-              : const SizedBox(),
+          size.width < 490 ? _buildTabHeaders() : const SizedBox(),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -258,6 +224,53 @@ class _ControllerState extends State<Controller>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTabHeaders() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const SizedBox(width: 3),
+        InkWell(
+          onTap: () => setState(() {
+            tab = false;
+          }),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                    width: 1.5, color: tab ? Colors.grey : Colors.blue),
+              ),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Setting Parameter'),
+            ),
+          ),
+        ),
+        const SizedBox(width: 15),
+        InkWell(
+          onTap: () => setState(() {
+            tab = true;
+          }),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                    width: 1.5, color: tab ? Colors.blue : Colors.grey),
+              ),
+            ),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
+              child: Text('Control System'),
+            ),
+          ),
+        ),
+        const SizedBox(width: 15),
+      ],
     );
   }
 
@@ -407,16 +420,23 @@ class _ControllerState extends State<Controller>
     );
   }
 
-  Column _renderPID(bool isStart, Function(bool)? onTap, Size size) {
+  Widget _renderPID(bool isStart, Function(bool)? onTap, Size size) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 20),
-        SwitchExample(
-          isStart: isStart,
-          onTap: onTap,
-          startTitle: 'PID ON',
-          stopTitle: 'PID OFF',
+        Row(
+          mainAxisAlignment: size.width < 490
+              ? MainAxisAlignment.start
+              : MainAxisAlignment.center,
+          children: [
+            SwitchExample(
+              isStart: isStart,
+              onTap: onTap,
+              startTitle: 'PID ON',
+              stopTitle: 'PID OFF',
+            ),
+          ],
         ),
         const SizedBox(height: 20),
         _renderTextField(size, 'PID Ref', isEnable: isStart, onChange: (value) {
