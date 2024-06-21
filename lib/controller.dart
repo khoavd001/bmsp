@@ -77,19 +77,7 @@ class _ControllerState extends State<Controller>
         }
       });
     });
-    databaseRefVanControl
-        .child('Override Value DO3')
-        .child('data')
-        .onValue
-        .listen((event) {
-      setState(() {
-        if (event.snapshot.value.toString() == "1") {
-          listStartStop[2] = true;
-        } else {
-          listStartStop[2] = false;
-        }
-      });
-    });
+
     databaseRefMonitorValue
         .child('Remote')
         .child('data')
