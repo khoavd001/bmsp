@@ -275,8 +275,8 @@ class _ControllerState extends State<Controller>
               ],
               stops: const [
                 0.1,
-                0.4,
                 0.5,
+                1,
               ],
               tileMode: TileMode.clamp,
               begin: Alignment.topCenter,

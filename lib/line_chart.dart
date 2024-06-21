@@ -254,11 +254,11 @@ class _LineChartSample2State extends State<LineChartSample2>
                                                 fontSize: 20,
                                                 color: Colors.white),
                                           ),
-                                          Consumer<DataModel>(builder:
-                                              (context, dataModel, child) {
+                                          Consumer<DataModel>(
+                                              builder: (_, dataModel, child) {
                                             if (!mounted) {
                                               _controller.value =
-                                                  dataModel.sumOutSide / 100;
+                                                  dataModel.sumOutSide / 1000;
                                             }
                                             return Row(
                                               children: [

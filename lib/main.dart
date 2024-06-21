@@ -13,7 +13,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
@@ -44,24 +43,30 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  DatabaseReference databaseRef = FirebaseDatabase.instance
-      .ref()
-      .child('Monitor-Valve')
-      .child('Flow Water')
-      .child('data');
-  // This widget is the root of your application.
+  late DatabaseReference databaseRef;
+
+  @override
+  void initState() {
+    super.initState();
+    databaseRef = FirebaseDatabase.instance
+        .ref()
+        .child('Monitor-Valve')
+        .child('Flow Water')
+        .child('data');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return ChangeNotifierProvider(
+      create: (_) => DataModel(databaseRef),
+      child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: ChangeNotifierProvider(
-            create: (context) => DataModel(databaseRef),
-            child: Consumer<DataModel>(builder: (context, dataModel, child) {
-              return LoginScreen();
-            })));
+        home: const LoginScreen(),
+      ),
+    );
   }
 }
