@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
         home: ChangeNotifierProvider(
             create: (context) => DataModel(databaseRef),
             child: Consumer<DataModel>(builder: (context, dataModel, child) {
-              return MyHomePage();
+              return LoginScreen();
             })));
   }
 }

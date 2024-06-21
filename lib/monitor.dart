@@ -36,9 +36,9 @@ class _MonitorState extends State<Monitor> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 16, horizontal: 8),
                         child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: 150, // Adjust this width as necessary
-                          ),
+                          constraints: const BoxConstraints(
+                              maxWidth: 200 // Adjust this width as necessary
+                              ),
                           child: ListTile(
                             leading: Image.asset(
                               UnitEnum.values[index].imageString,

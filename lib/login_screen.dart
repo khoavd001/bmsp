@@ -25,6 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -38,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Container(
+        child: SizedBox(
           width: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -121,8 +122,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Padding _renderForm(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 500),
+      padding: EdgeInsets.symmetric(horizontal: size.width < 490 ? 16 : 500),
       child: Column(
         children: [
           const SizedBox(height: 30.0),
@@ -141,6 +143,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Row(
+        mainAxisAlignment: size.width < 490
+            ? MainAxisAlignment.center
+            : MainAxisAlignment.start,
         children: [
           Container(
             decoration: BoxDecoration(
@@ -161,38 +166,43 @@ class _LoginScreenState extends State<LoginScreen> {
               filterQuality: FilterQuality.high,
             ),
           ),
-          SizedBox(
-            width: size.width * 0.168,
-          ),
-          Column(
-            children: [
-              const Text(
-                'TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HỒ CHÍ MINH',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 30.0,
-                  fontWeight: FontWeight.bold,
-                  fontFeatures: [FontFeature.alternative(0)],
+          size.width < 490
+              ? const SizedBox()
+              : SizedBox(
+                  width: size.width * 0.168,
                 ),
-              ),
-              const SizedBox(
-                  height: 10.0), // Add some space between text and the line
-              Container(
-                width: size.width * 0.51747312,
-                height: 1.0,
-                color: Colors.white,
-              ),
-              const Text(
-                'Địa chỉ: 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức, Thành phố Hồ Chí Minh.',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.normal,
-                  fontFeatures: [FontFeature.alternative(0)],
+          size.width < 490
+              ? const SizedBox()
+              : Column(
+                  children: [
+                    const Text(
+                      'TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT TP.HỒ CHÍ MINH',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        fontFeatures: [FontFeature.alternative(0)],
+                      ),
+                    ),
+                    const SizedBox(
+                        height:
+                            10.0), // Add some space between text and the line
+                    Container(
+                      width: size.width * 0.51747312,
+                      height: 1.0,
+                      color: Colors.white,
+                    ),
+                    const Text(
+                      'Địa chỉ: 1 Võ Văn Ngân, Phường Linh Chiểu, Thành phố Thủ Đức, Thành phố Hồ Chí Minh.',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.normal,
+                        fontFeatures: [FontFeature.alternative(0)],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
         ],
       ),
     );

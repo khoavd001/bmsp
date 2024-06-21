@@ -52,16 +52,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     const SizedBox(
                       width: 20,
                     ),
-                    Text(
-                      'UTE',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                          fontSize: 50),
-                    ),
+                    size.width < 490
+                        ? const SizedBox()
+                        : Text(
+                            'UTE',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                                fontSize: 50),
+                          ),
                     const Spacer(),
                     Material(
-                      color: AppColors.primary2,
+                      color: size.width < 490 ? null : AppColors.primary2,
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
                       child: InkWell(
                         splashColor: AppColors.primary.withAlpha(50),
