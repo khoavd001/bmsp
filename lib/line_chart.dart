@@ -299,30 +299,48 @@ class _LineChartSample2State extends State<LineChartSample2>
                         ),
                       ],
                     )
-                  : LineChart(
-                      duration: const Duration(seconds: 1),
-                      showAvg ? avgData() : mainData(),
+                  : Padding(
+                      padding: const EdgeInsets.only(left: 16, bottom: 16),
+                      child: LineChart(
+                        duration: const Duration(seconds: 1),
+                        mainData(),
+                      ),
                     ),
             ),
           ),
-          SizedBox(
-            width: 60,
-            height: 34,
-            child: TextButton(
-              onPressed: () {
-                setState(() {
-                  showAvg = !showAvg;
-                });
-              },
-              child: Text(
-                'avg',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
+          widget.unitType == UnitEnum.volume
+              ? SizedBox()
+              : Positioned.fill(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RotatedBox(
+                        quarterTurns: -1,
+                        child: Text(
+                          widget.unitType.nameString,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-          ),
+          widget.unitType == UnitEnum.volume
+              ? SizedBox()
+              : const Positioned.fill(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Time',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
         ],
       ),
     );
@@ -404,36 +422,40 @@ class _LineChartSample2State extends State<LineChartSample2>
       fontSize: size.width < 490 ? 10 : 15,
     );
     String text;
+    final dividerNumber =
+        widget.unitType != UnitEnum.current && widget.unitType != UnitEnum.power
+            ? widget.unitType.divideNumber.toInt()
+            : widget.unitType.divideNumber;
     switch (value.toInt()) {
       case 1:
-        text = '${1 * widget.unitType.divideNumber.toInt()}';
+        text = '${1 * dividerNumber}';
         break;
       case 2:
-        text = '${2 * widget.unitType.divideNumber.toInt()}';
+        text = '${2 * dividerNumber}';
         break;
       case 3:
-        text = '${3 * widget.unitType.divideNumber.toInt()}';
+        text = '${3 * dividerNumber}';
         break;
       case 4:
-        text = '${4 * widget.unitType.divideNumber.toInt()}';
+        text = '${4 * dividerNumber}';
         break;
       case 5:
-        text = '${5 * widget.unitType.divideNumber.toInt()}';
+        text = '${5 * dividerNumber}';
         break;
       case 6:
-        text = '${6 * widget.unitType.divideNumber.toInt()}';
+        text = '${6 * dividerNumber}';
         break;
       case 7:
-        text = '${7 * widget.unitType.divideNumber.toInt()}';
+        text = '${7 * dividerNumber}';
         break;
       case 8:
-        text = '${8 * widget.unitType.divideNumber.toInt()}';
+        text = '${8 * dividerNumber}';
         break;
       case 9:
-        text = '${9 * widget.unitType.divideNumber.toInt()}';
+        text = '${9 * dividerNumber}';
         break;
       case 10:
-        text = '${10 * widget.unitType.divideNumber.toInt()}';
+        text = '${10 * dividerNumber}';
         break;
 
       default:
@@ -480,6 +502,7 @@ class _LineChartSample2State extends State<LineChartSample2>
           ),
         ),
         leftTitles: AxisTitles(
+          axisNameSize: 24,
           sideTitles: SideTitles(
             showTitles: true,
             interval: 1,
