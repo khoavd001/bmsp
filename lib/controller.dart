@@ -165,109 +165,126 @@ class _ControllerState extends State<Controller>
             ),
           ],
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: listStartStop
-              .asMap()
-              .map((index, value) => MapEntry(
-                  index,
-                  Stack(
-                    children: [
-                      value
-                          ? SizedBox(
-                              width: 400,
-                              child: Row(
+        Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  height: 300,
+                ),
+                Lottie.asset('assets/images/background.json', height: 200),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: listStartStop
+                  .asMap()
+                  .map((index, value) => MapEntry(
+                      index,
+                      Stack(
+                        children: [
+                          value
+                              ? SizedBox(
+                                  width: 400,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Lottie.asset(
+                                        'assets/images/light_buzz.json',
+                                        height: 150,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : SizedBox(
+                                  width: 400,
+                                ),
+                          Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              Image.asset(
+                                'assets/images/pipe_valve.png',
+                                height: 200,
+                              ),
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
-                                  Lottie.asset(
-                                    'assets/images/light_buzz.json',
-                                    height: 150,
+                                  SizedBox(
+                                    width: 150,
                                   ),
+                                  value
+                                      ? Stack(
+                                          children: [
+                                            Lottie.asset(
+                                              'assets/images/valve2.json',
+                                              height: 150,
+                                            ),
+                                          ],
+                                        )
+                                      : Row(
+                                          children: [
+                                            SizedBox(
+                                              width: 150,
+                                            ),
+                                            SizedBox(
+                                              height: 150,
+                                            ),
+                                          ],
+                                        ),
                                 ],
                               ),
-                            )
-                          : SizedBox(
-                              width: 400,
-                            ),
-                      Column(
-                        children: [
-                          const SizedBox(height: 20),
-                          Image.asset(
-                            'assets/images/pipe_valve.png',
-                            height: 200,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                width: 150,
-                              ),
-                              value
-                                  ? Stack(
-                                      children: [
-                                        Lottie.asset(
-                                          'assets/images/valve2.json',
-                                          height: 150,
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 150,
-                                        ),
-                                        SizedBox(
-                                          height: 150,
-                                        ),
-                                      ],
+                              const SizedBox(height: 20),
+                              Material(
+                                elevation: 5,
+                                shadowColor: Colors.blueAccent,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8)),
+                                color: value ? Colors.greenAccent : Colors.red,
+                                child: InkWell(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(8)),
+                                  onTap: () {
+                                    setState(() {
+                                      listStartStop[index] =
+                                          !listStartStop[index];
+                                      if (!value) {
+                                        databaseRefVanControl
+                                            .child(
+                                                'Override Value DO${index + 1}')
+                                            .child('data')
+                                            .set(1);
+                                        _controller.forward();
+                                      } else {
+                                        databaseRefVanControl
+                                            .child(
+                                                'Override Value DO${index + 1}')
+                                            .child('data')
+                                            .set(0);
+                                        _controller.stop();
+                                      }
+                                    });
+                                  },
+                                  splashColor: AppColors.neutral,
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 30, vertical: 10),
+                                    child: Text(
+                                      value ? 'ON' : 'OFF',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
                                     ),
+                                  ),
+                                ),
+                              )
                             ],
                           ),
-                          const SizedBox(height: 20),
-                          Material(
-                            elevation: 5,
-                            shadowColor: Colors.blueAccent,
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(8)),
-                            color: value ? Colors.greenAccent : Colors.red,
-                            child: InkWell(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(8)),
-                              onTap: () {
-                                setState(() {
-                                  listStartStop[index] = !listStartStop[index];
-                                  if (!value) {
-                                    databaseRefVanControl
-                                        .child('Override Value DO${index + 1}')
-                                        .child('data')
-                                        .set(1);
-                                    _controller.forward();
-                                  } else {
-                                    databaseRefVanControl
-                                        .child('Override Value DO${index + 1}')
-                                        .child('data')
-                                        .set(0);
-                                    _controller.stop();
-                                  }
-                                });
-                              },
-                              splashColor: AppColors.neutral,
-                              child: Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 30, vertical: 10),
-                                child: Text(
-                                  value ? 'ON' : 'OFF',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                          )
                         ],
-                      ),
-                    ],
-                  )))
-              .values
-              .toList(),
+                      )))
+                  .values
+                  .toList(),
+            ),
+          ],
         ),
       ],
     );
