@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:flutter_toggle_tab/flutter_toggle_tab.dart';
+import 'package:lottie/lottie.dart';
 
 class Controller extends StatefulWidget {
   const Controller({
@@ -16,7 +17,7 @@ class Controller extends StatefulWidget {
 }
 
 class _ControllerState extends State<Controller>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
   @override
   bool get wantKeepAlive => true;
   List<bool> listStartStop = [false, false];
@@ -38,9 +39,10 @@ class _ControllerState extends State<Controller>
   TextEditingController pEditText = TextEditingController();
   TextEditingController iEditText = TextEditingController();
   TextEditingController dEditText = TextEditingController();
-
+  late AnimationController _controller;
   @override
   void initState() {
+    _controller = AnimationController(vsync: this);
     databaseRef.child('PIDselect').child('Data').onValue.listen((event) {
       setState(() {
         if (event.snapshot.value.toString() == "1") {
@@ -95,7 +97,14 @@ class _ControllerState extends State<Controller>
         selectLocal = int.parse(event.snapshot.value.toString());
       });
     });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -162,47 +171,99 @@ class _ControllerState extends State<Controller>
               .asMap()
               .map((index, value) => MapEntry(
                   index,
-                  Column(
+                  Stack(
                     children: [
-                      const SizedBox(height: 20),
-                      Image.asset(
-                        value
-                            ? 'assets/images/start_bms.png'
-                            : 'assets/images/stop_bms.png',
-                        height: 400,
-                      ),
-                      const SizedBox(height: 20),
-                      Material(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(8)),
-                        color: value ? AppColors.primary2 : Colors.red,
-                        child: InkWell(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(8)),
-                          onTap: () {
-                            setState(() {
-                              listStartStop[index] = !listStartStop[index];
-                              if (!value) {
-                                databaseRefVanControl
-                                    .child('Override Value DO${index + 1}')
-                                    .child('data')
-                                    .set(1);
-                              } else {
-                                databaseRefVanControl
-                                    .child('Override Value DO${index + 1}')
-                                    .child('data')
-                                    .set(0);
-                              }
-                            });
-                          },
-                          splashColor: AppColors.neutral,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 10),
-                            child: Text(value ? 'Start' : 'Stop'),
+                      value
+                          ? SizedBox(
+                              width: 400,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Lottie.asset(
+                                    'assets/images/light_buzz.json',
+                                    height: 150,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SizedBox(
+                              width: 400,
+                            ),
+                      Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          Image.asset(
+                            'assets/images/pipe_valve.png',
+                            height: 200,
                           ),
-                        ),
-                      )
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                width: 150,
+                              ),
+                              value
+                                  ? Stack(
+                                      children: [
+                                        Lottie.asset(
+                                          'assets/images/valve2.json',
+                                          height: 150,
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 150,
+                                        ),
+                                        SizedBox(
+                                          height: 150,
+                                        ),
+                                      ],
+                                    ),
+                            ],
+                          ),
+                          const SizedBox(height: 20),
+                          Material(
+                            elevation: 5,
+                            shadowColor: Colors.blueAccent,
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(8)),
+                            color: value ? Colors.greenAccent : Colors.red,
+                            child: InkWell(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
+                              onTap: () {
+                                setState(() {
+                                  listStartStop[index] = !listStartStop[index];
+                                  if (!value) {
+                                    databaseRefVanControl
+                                        .child('Override Value DO${index + 1}')
+                                        .child('data')
+                                        .set(1);
+                                    _controller.forward();
+                                  } else {
+                                    databaseRefVanControl
+                                        .child('Override Value DO${index + 1}')
+                                        .child('data')
+                                        .set(0);
+                                    _controller.stop();
+                                  }
+                                });
+                              },
+                              splashColor: AppColors.neutral,
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 10),
+                                child: Text(
+                                  value ? 'ON' : 'OFF',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
                   )))
               .values

@@ -201,6 +201,7 @@ class _LineChartSample2State extends State<LineChartSample2>
   }
 
   Expanded _renderChart() {
+    final size = MediaQuery.of(context).size;
     return Expanded(
       child: Stack(
         children: <Widget>[
@@ -308,7 +309,7 @@ class _LineChartSample2State extends State<LineChartSample2>
                     ),
             ),
           ),
-          widget.unitType == UnitEnum.volume
+          widget.unitType == UnitEnum.volume || size.width < 490
               ? SizedBox()
               : Positioned.fill(
                   child: Column(
