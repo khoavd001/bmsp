@@ -271,7 +271,7 @@ class _ControllerState extends State<Controller>
                           Lottie.asset(
                             'assets/images/signal_light.json',
                             height: 55,
-                            delegates: listStartStop[0] == true
+                            delegates: listStartStop[1] == true
                                 ? null
                                 : LottieDelegates(
                                     values: [
@@ -300,7 +300,7 @@ class _ControllerState extends State<Controller>
                           Lottie.asset(
                             'assets/images/signal_light.json',
                             height: 55,
-                            delegates: listStartStop[1] == true
+                            delegates: listStartStop[0] == true
                                 ? null
                                 : LottieDelegates(
                                     values: [

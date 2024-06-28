@@ -319,7 +319,7 @@ class _LineChartSample2State extends State<LineChartSample2>
                       RotatedBox(
                         quarterTurns: -1,
                         child: Text(
-                          widget.unitType.nameString,
+                          '${widget.unitType.nameString} (${widget.unitType.unitString})',
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16),
                         ),

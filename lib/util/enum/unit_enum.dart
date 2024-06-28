@@ -113,7 +113,7 @@ enum UnitEnum {
       case flowWater:
         return 'l/m';
       case volume:
-        return 'l';
+        return 'l/m';
       case pressure:
         return '%';
       case power:
